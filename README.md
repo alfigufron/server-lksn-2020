@@ -6,8 +6,8 @@
 * Log In
 * Check Profile
 * Logout
-* Create Poll ***On Progress***
+* Create Poll | ***On Progress***
 
 ## Vue 2.6
 * Log In
-* Dashboard ***On Progress***
+* Dashboard | ***On Progress***
