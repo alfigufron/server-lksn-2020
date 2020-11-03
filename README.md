@@ -1,11 +1,12 @@
 # SERVER LKSN 2020 | Pilih Yuk App
 
-![picture alt](https://github.com/alfigufron/server-lksn-2020/blob/demo.png)
+![picture alt](https://github.com/alfigufron/server-lksn-2020/blob/master/demo.png)
 
 ## Laravel 7
 * Log In
 * Check Profile
 * Logout
+* Create Poll ***On Progress***
 
 ## Vue 2.6
 * Log In
