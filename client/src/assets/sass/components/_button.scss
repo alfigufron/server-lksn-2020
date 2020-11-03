@@ -1,0 +1,14 @@
+button {
+  background-color: $primary-color;
+  color: $base-white-color;
+  border: none;
+  outline: none;
+  padding: 12px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: .3s;
+
+  &:hover {
+    background-color: $primary-color-darken;
+  }
+}
