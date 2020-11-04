@@ -17,6 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('username', 191)->unique();
             $table->string('password', 191);
+            $table->enum('default_password', [1, 0]);
             $table->string('role', 191);
             $table->foreignId('division_id')
                 ->constrained('divisions')

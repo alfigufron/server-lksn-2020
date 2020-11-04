@@ -11,12 +11,20 @@ class User extends SetAuth implements JWTSubject
 	use Notifiable;
 
   protected $fillable = [
-		'username', 'password', 'role', 'division_id'
+		'username', 'password', 'role', 'default_password', 'division_id'
 	];
 
 	protected $hidden = [
 		'password'
 	];
+
+	public static function boot() {
+		parent::boot();
+
+		static::creating(function($model) {
+			$model->default_password = 1;
+		});
+	}
 
 	public function getJWTIdentifier() {
 		return $this->getKey();

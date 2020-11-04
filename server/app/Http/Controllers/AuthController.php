@@ -13,8 +13,24 @@ class AuthController extends Controller
 {
   public function login(Request $req) {
 		$loginData = $req->only('username', 'password');
-		if (!$token = Auth::attempt($loginData))
+		$user = User::where('username', $req->username)->first();
+		
+		if ($user) {
+			($user->role == 'ADMIN')
+				? $guard = 'A'
+				: $guard = 'U';
+		} else {
 			return response()->json(['error' => 'Unauthorized'], 401);
+		}
+
+		$payload = [
+			'grd' => $guard,
+			'def_pass' => $user->default_password
+		];
+		if (!$token = Auth::claims($payload)->attempt($loginData))
+			return response()->json(['error' => 'Unauthorized'], 401);
+		
+		
 
 		return response()->json([
 			'access_token' => $token,
@@ -54,6 +70,7 @@ class AuthController extends Controller
 
 		$user = User::find($user->id);
 		$user->password = bcrypt($req->new_password);
+		$user->default_password = "0";
 		$user->save();
 		Auth::logout();
 			
