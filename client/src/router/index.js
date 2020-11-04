@@ -1,10 +1,13 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import NProgress from "nprogress";
 
 import { Profile } from "@/services/auth";
 import { http } from "@/services/config-http";
 
-import { LoginPage, DashboardAdmin } from "@/views/module";
+import { LoginPage, DashboardAdmin, ResetPassword } from "@/views/module";
+
+import "../../node_modules/nprogress/nprogress.css";
 
 Vue.use(VueRouter);
 
@@ -18,9 +21,17 @@ const routes = [
     }
   },
   {
-    path: "/admin/dashboard",
-    name: "DashboardAdmin",
+    path: "/dashboard",
+    name: "Dashboard",
     component: DashboardAdmin,
+    meta: {
+      authenticated: true
+    }
+  },
+  {
+    path: "/reset-password",
+    name: "ResetPassword",
+    component: ResetPassword,
     meta: {
       authenticated: true
     }
@@ -43,12 +54,21 @@ async function Auth() {
 
 router.beforeEach(async (to, from, next) => {
   if (to.matched.some(record => record.meta.unauthenticated)) {
-    (await Auth()) ? next({ name: "DashboardAdmin" }) : next();
+    (await Auth()) ? next({ name: "Dashboard" }) : next();
   } else if (to.matched.some(record => record.meta.authenticated)) {
     (await Auth()) ? next() : next({ name: "Login" });
   } else {
     next();
   }
+});
+
+router.beforeResolve((to, from, next) => {
+  if (to.name) NProgress.start();
+  next();
+});
+
+router.afterEach(() => {
+  NProgress.done();
 });
 
 export default router;

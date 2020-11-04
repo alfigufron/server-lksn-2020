@@ -5,7 +5,6 @@
       backgroundImage: 'url(' + require('@/assets/background/login.png') + ')'
     }"
   >
-    <vue-topprogress ref="topProgress"></vue-topprogress>
     <div class="container">
       <div class="row">
         <div class="col-md-7">
@@ -33,7 +32,7 @@
                 <input type="password" v-model="data.password" />
               </div>
 
-              <button type="submit" @click.prevent="login">Masuk</button>
+              <button type="submit" @click.prevent="Login()">Masuk</button>
             </form>
           </div>
         </div>
@@ -44,12 +43,14 @@
 
 <script>
 import { AuthLogin } from "@/services/auth";
-import { vueTopprogress } from "vue-top-progress";
+import NProgress from "nprogress";
 
 export default {
   title: "Log In",
+
   name: "Login",
-  data: function() {
+
+  data() {
     return {
       data: {
         username: "",
@@ -58,11 +59,9 @@ export default {
       onSubmit: false
     };
   },
-  components: {
-    vueTopprogress
-  },
+
   methods: {
-    async login() {
+    async Login() {
       if (this.onSubmit == false) {
         this.onSubmit = true;
 
@@ -73,11 +72,11 @@ export default {
             type: "warning"
           });
         } else {
-          this.$refs.topProgress.start();
+          NProgress.start();
 
           let res = await AuthLogin(this.data);
 
-          if (res == 200) this.$router.push({ name: "DashboardAdmin" });
+          if (res == 200) this.$router.push({ name: "Dashboard" });
           if (res == 401) {
             this.$fire({
               title: "Gagal Masuk",
@@ -90,13 +89,9 @@ export default {
         }
 
         this.onSubmit = false;
-        this.$refs.topProgress.done();
+        NProgress.done();
       }
     }
   }
 };
 </script>
-
-<style lang="scss">
-@import "@/assets/sass/main.scss";
-</style>

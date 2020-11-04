@@ -2,10 +2,10 @@ import { http, setToken, clearToken } from "./config-http";
 
 async function AuthLogin(data) {
   try {
-    let res = await http.post("auth/login", data);
+    const res = await http.post("auth/login", data);
 
     setToken(res.data.access_token);
-    return 200;
+    return res.status;
   } catch (err) {
     if (err.response.status == 401) return 401;
     alert("There is an error");
@@ -14,7 +14,7 @@ async function AuthLogin(data) {
 
 async function Profile() {
   try {
-    let res = await http.post("auth/me");
+    const res = await http.post("auth/me");
 
     return res;
   } catch (err) {
@@ -26,12 +26,24 @@ async function Profile() {
   }
 }
 
+async function ResetPassword(data) {
+  try {
+    const res = await http.post("auth/reset_password", data);
+
+    return res.status;
+  } catch (err) {
+    if (err.response.status === 422) return 422;
+    if (err.response.status === 401) return 401;
+    alert("There is an error");
+  }
+}
+
 async function AuthLogout() {
   try {
-    await http.post("auth/logout");
+    const res = await http.post("auth/logout");
 
     clearToken();
-    return 200;
+    return res.status;
   } catch (err) {
     if (err.response.status === 401) {
       clearToken();
@@ -41,4 +53,4 @@ async function AuthLogout() {
   }
 }
 
-export { AuthLogin, Profile, AuthLogout };
+export { AuthLogin, Profile, ResetPassword, AuthLogout };

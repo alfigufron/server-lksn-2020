@@ -1,5 +1,6 @@
 import LoginPage from "../Login.vue";
 
-import DashboardAdmin from "../admin/Dashboard.vue";
+import DashboardAdmin from "../Dashboard.vue";
+import ResetPassword from "../ResetPassword.vue";
 
-export { LoginPage, DashboardAdmin };
+export { LoginPage, DashboardAdmin, ResetPassword };
