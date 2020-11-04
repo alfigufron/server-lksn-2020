@@ -1,6 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-// import Home from "../views/Home.vue";
+
+import { Profile } from "@/services/auth";
+import { http } from "@/services/config-http";
+
 import { LoginPage, DashboardAdmin } from "@/views/module";
 
 Vue.use(VueRouter);
@@ -30,13 +33,19 @@ const router = new VueRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
-  let token = localStorage.getItem("AuthToken");
+async function Auth() {
+  const token = localStorage.getItem("access_token");
+  if (token) http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
+  var res = await Profile();
+  return res != 401 ? true : false;
+}
+
+router.beforeEach(async (to, from, next) => {
   if (to.matched.some(record => record.meta.unauthenticated)) {
-    token != null ? next({ name: "DashboardAdmin" }) : next();
+    (await Auth()) ? next({ name: "DashboardAdmin" }) : next();
   } else if (to.matched.some(record => record.meta.authenticated)) {
-    token == null ? next({ name: "Login" }) : next();
+    (await Auth()) ? next() : next({ name: "Login" });
   } else {
     next();
   }

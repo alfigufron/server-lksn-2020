@@ -5,6 +5,7 @@
       backgroundImage: 'url(' + require('@/assets/background/login.png') + ')'
     }"
   >
+    <vue-topprogress ref="topProgress"></vue-topprogress>
     <div class="container">
       <div class="row">
         <div class="col-md-7">
@@ -21,7 +22,7 @@
               Halo! Kamu harus login dulu ya, biar dapat akses buat ikut voting.
             </p>
 
-            <form @submit.prevent="login">
+            <form>
               <div class="group-input">
                 <label>Username</label>
                 <input type="text" v-model="data.username" />
@@ -32,7 +33,7 @@
                 <input type="password" v-model="data.password" />
               </div>
 
-              <button type="submit">Masuk</button>
+              <button type="submit" @click.prevent="login">Masuk</button>
             </form>
           </div>
         </div>
@@ -43,6 +44,7 @@
 
 <script>
 import { AuthLogin } from "@/services/auth";
+import { vueTopprogress } from "vue-top-progress";
 
 export default {
   title: "Log In",
@@ -56,6 +58,9 @@ export default {
       onSubmit: false
     };
   },
+  components: {
+    vueTopprogress
+  },
   methods: {
     async login() {
       if (this.onSubmit == false) {
@@ -68,18 +73,24 @@ export default {
             type: "warning"
           });
         } else {
+          this.$refs.topProgress.start();
+
           let res = await AuthLogin(this.data);
 
           if (res == 200) this.$router.push({ name: "DashboardAdmin" });
-          if (res == 401)
+          if (res == 401) {
             this.$fire({
               title: "Gagal Masuk",
               text: "Username atau password salah!",
               type: "error"
             });
+
+            this.data.password = "";
+          }
         }
 
         this.onSubmit = false;
+        this.$refs.topProgress.done();
       }
     }
   }

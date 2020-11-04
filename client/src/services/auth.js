@@ -1,4 +1,4 @@
-import { http } from "./config-http";
+import { http, setToken, clearToken } from "./config-http";
 
 async function AuthLogin(data) {
   try {
@@ -12,6 +12,20 @@ async function AuthLogin(data) {
   }
 }
 
+async function Profile() {
+  try {
+    let res = await http.post("auth/me");
+
+    return res;
+  } catch (err) {
+    if (err.response.status === 401) {
+      clearToken();
+      return 401;
+    }
+    alert("There is an error");
+  }
+}
+
 async function AuthLogout() {
   try {
     await http.post("auth/logout");
@@ -19,18 +33,12 @@ async function AuthLogout() {
     clearToken();
     return 200;
   } catch (err) {
+    if (err.response.status === 401) {
+      clearToken();
+      return 401;
+    }
     console.log(err.response);
   }
 }
 
-function setToken(token) {
-  http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  localStorage.setItem("AuthToken", token);
-}
-
-function clearToken() {
-  localStorage.removeItem("AuthToken");
-  http.defaults.headers.common["Authorization"] = "";
-}
-
-export { AuthLogin, AuthLogout };
+export { AuthLogin, Profile, AuthLogout };

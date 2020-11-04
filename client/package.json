@@ -13,7 +13,8 @@
     "remixicon": "^2.5.0",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
-    "vue-simple-alert": "^1.1.1"
+    "vue-simple-alert": "^1.1.1",
+    "vue-top-progress": "^0.7.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

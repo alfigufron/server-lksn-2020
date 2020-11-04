@@ -8,6 +8,6 @@
 * Logout
 * Create Poll | ***On Progress***
 
-## Vue 2.6
+## Vue 2
 * Log In
 * Dashboard | ***On Progress***

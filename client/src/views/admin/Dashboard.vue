@@ -1,5 +1,6 @@
 <template>
   <div class="dashboard-admin">
+    <vue-topprogress ref="topProgress"></vue-topprogress>
     <h1>Dashboard Admin</h1>
     <button @click="logout">Logout</button>
   </div>
@@ -7,14 +8,36 @@
 
 <script>
 import { AuthLogout } from "@/services/auth";
+import { vueTopprogress } from "vue-top-progress";
 
 export default {
   name: "Dashboard",
 
+  data() {
+    return {
+      onSubmit: false
+    };
+  },
+
+  components: {
+    vueTopprogress
+  },
+
   methods: {
     async logout() {
-      let res = await AuthLogout();
-      if (res == 200) this.$router.push("/");
+      if (this.onSubmit == false) {
+        this.onSubmit = true;
+        this.$refs.topProgress.start();
+
+        let res = await AuthLogout();
+        this.onSubmit = false;
+        this.$refs.topProgress.done();
+        if (res == 200 || res == 401) this.backLogin();
+      }
+    },
+
+    backLogin() {
+      this.$router.push({ name: "Login" });
     }
   }
 };
