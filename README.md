@@ -1,4 +1,4 @@
-# SERVER LKSN 2020 | Pilih Yuk App
+# SERVER LKSN 2020 | Pilih Yuk
 
 ![picture alt](https://github.com/alfigufron/server-lksn-2020/blob/master/demo.png)
 
@@ -10,4 +10,5 @@
 
 ## Vue 2
 * Log In
+* Change Password
 * Dashboard | ***On Progress***
