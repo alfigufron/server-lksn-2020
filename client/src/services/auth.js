@@ -1,11 +1,20 @@
 import { http, setToken, clearToken } from "./config-http";
+import jwt_decode from "jwt-decode";
 
 async function AuthLogin(data) {
   try {
     const res = await http.post("auth/login", data);
 
-    setToken(res.data.access_token);
-    return res.status;
+    const token = res.data.access_token;
+    const payload = jwt_decode(token);
+    setToken(token, payload.grd);
+
+    const result = {
+      status: res.status,
+      def_pass: payload.def_pass
+    };
+
+    return result;
   } catch (err) {
     if (err.response.status == 401) return 401;
     alert("There is an error");

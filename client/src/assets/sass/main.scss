@@ -2,12 +2,15 @@
 
 @import 'base/typography';
 
+@import 'components/navbar';
 @import 'components/card';
 @import 'components/form';
 @import 'components/button';
 @import 'components/sweet_alert';
 
 @import 'pages/login';
+@import 'pages/dashboard';
+@import 'pages/reset_password';
 
 @import 'vendors/bootstrap/bootstrap-grid.scss';
 
@@ -28,4 +31,12 @@ img {
 
 p {
   line-height: 1.4;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
 }

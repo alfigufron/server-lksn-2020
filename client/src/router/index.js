@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import NProgress from "nprogress";
+import jwt_decode from "jwt-decode";
 
 import { Profile } from "@/services/auth";
 import { http } from "@/services/config-http";
@@ -17,7 +18,7 @@ const routes = [
     name: "Login",
     component: LoginPage,
     meta: {
-      unauthenticated: true
+      Unauthenticated: true
     }
   },
   {
@@ -25,7 +26,7 @@ const routes = [
     name: "Dashboard",
     component: DashboardAdmin,
     meta: {
-      authenticated: true
+      Authenticated: true
     }
   },
   {
@@ -33,7 +34,7 @@ const routes = [
     name: "ResetPassword",
     component: ResetPassword,
     meta: {
-      authenticated: true
+      ResetPassword: true
     }
   }
 ];
@@ -44,19 +45,48 @@ const router = new VueRouter({
   routes
 });
 
+var def_pass = false;
+
 async function Auth() {
   const token = localStorage.getItem("access_token");
-  if (token) http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  if (token) {
+    http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
 
-  var res = await Profile();
-  return res != 401 ? true : false;
+  const res = await Profile();
+  if (res != 401) {
+    var payload = jwt_decode(token);
+    def_pass = payload.def_pass == 1 ? true : false;
+
+    return true;
+  } else {
+    return false;
+  }
 }
 
 router.beforeEach(async (to, from, next) => {
-  if (to.matched.some(record => record.meta.unauthenticated)) {
-    (await Auth()) ? next({ name: "Dashboard" }) : next();
-  } else if (to.matched.some(record => record.meta.authenticated)) {
-    (await Auth()) ? next() : next({ name: "Login" });
+  if (to.matched.some(record => record.meta.Unauthenticated)) {
+    if (await Auth()) {
+      def_pass ? next({ name: "ResetPassword" }) : next({ name: "Dashboard" });
+    } else {
+      next();
+    }
+  } else if (to.matched.some(record => record.meta.Authenticated)) {
+    if (await Auth()) {
+      if (def_pass) {
+        next({ name: "ResetPassword" });
+      } else {
+        next();
+      }
+    } else {
+      next({ name: "Login" });
+    }
+  } else if (to.matched.some(record => record.meta.ResetPassword)) {
+    if (await Auth()) {
+      next();
+    } else {
+      next({ name: "Login" });
+    }
   } else {
     next();
   }

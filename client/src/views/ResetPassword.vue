@@ -1,6 +1,7 @@
 <template>
-  <div class="reset-password">
-    <div class="container">
+  <div>
+    <Navbar url="reset-password"></Navbar>
+    <div class="container reset-password">
       <h1>Reset Password</h1>
       <br />
       <form>
@@ -12,33 +13,60 @@
           <label>Password Baru</label>
           <input type="password" v-model="data.new_password" />
         </div>
-        <button type="submit" @click.prevent="ResetPassword()">Simpan</button>
+        <div class="group-input">
+          <label>Konfirmasi Password Baru</label>
+          <input type="password" v-model="data.confirm_new_password" />
+        </div>
+        <button
+          type="submit"
+          @click.prevent="ResetPassword()"
+          v-bind:class="{ 'btn-disable': onSubmit }"
+        >
+          Simpan
+        </button>
       </form>
       <br />
-      <router-link :to="{ name: 'Dashboard' }">Kembali</router-link>
+      <router-link
+        v-if="def_pass === false"
+        :to="{ name: 'Dashboard' }"
+        class="btn btn-block"
+      >
+        Kembali
+      </router-link>
     </div>
   </div>
 </template>
 
 <script>
-import { ResetPassword } from "@/services/auth";
 import NProgress from "nprogress";
+import jwt_decode from "jwt-decode";
+
+import { ResetPassword } from "@/services/auth";
+import { Navbar } from "@/components/module";
 
 export default {
   title: "Lupa Password",
-
   name: "ResetPassword",
-
+  components: {
+    Navbar
+  },
   data() {
     return {
       data: {
         old_password: "",
-        new_password: ""
+        new_password: "",
+        confirm_new_password: ""
       },
-      onSubmit: false
+      onSubmit: false,
+      def_pass: false
     };
   },
+  created() {
+    const token = localStorage.getItem("access_token");
+    const payload = jwt_decode(token);
 
+    payload.def_pass == 1 ? (this.def_pass = true) : (this.def_pass = false);
+  },
   methods: {
     async ResetPassword() {
       if (this.onSubmit == false) {
@@ -48,6 +76,12 @@ export default {
           this.$fire({
             title: "Peringatan",
             text: "Kolom password tidak boleh kosong!",
+            type: "warning"
+          });
+        } else if (this.data.new_password != this.data.confirm_new_password) {
+          this.$fire({
+            title: "Peringatan",
+            text: "Konfirmasi password baru tidak sama!",
             type: "warning"
           });
         } else {
@@ -68,12 +102,12 @@ export default {
               text: "Password lama yang anda masukan salah!",
               type: "error"
             });
+            NProgress.done();
           } else if (res == 401) {
             this.$router.push({ name: "Login" });
           }
         }
 
-        NProgress.done();
         this.onSubmit = false;
       }
     }

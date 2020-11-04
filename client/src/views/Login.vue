@@ -32,7 +32,13 @@
                 <input type="password" v-model="data.password" />
               </div>
 
-              <button type="submit" @click.prevent="Login()">Masuk</button>
+              <button
+                type="submit"
+                @click.prevent="Login()"
+                v-bind:class="{ 'btn-disable': onSubmit }"
+              >
+                Masuk
+              </button>
             </form>
           </div>
         </div>
@@ -47,9 +53,7 @@ import NProgress from "nprogress";
 
 export default {
   title: "Log In",
-
   name: "Login",
-
   data() {
     return {
       data: {
@@ -59,7 +63,6 @@ export default {
       onSubmit: false
     };
   },
-
   methods: {
     async Login() {
       if (this.onSubmit == false) {
@@ -71,25 +74,26 @@ export default {
             text: "Username atau password tidak boleh kosong!",
             type: "warning"
           });
+          this.onSubmit = false;
         } else {
           NProgress.start();
-
           let res = await AuthLogin(this.data);
 
-          if (res == 200) this.$router.push({ name: "Dashboard" });
-          if (res == 401) {
+          if (res.status == 200) {
+            res.def_pass == 0
+              ? this.$router.push({ name: "Dashboard" })
+              : this.$router.push({ name: "ResetPassword" });
+          } else if (res == 401) {
             this.$fire({
               title: "Gagal Masuk",
               text: "Username atau password salah!",
               type: "error"
             });
-
             this.data.password = "";
+            this.onSubmit = false;
+            NProgress.done();
           }
         }
-
-        this.onSubmit = false;
-        NProgress.done();
       }
     }
   }

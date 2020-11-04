@@ -1,45 +1,26 @@
 <template>
   <div class="dashboard">
-    <h1>Dashboard</h1>
-    <br />
-    <router-link :to="{ name: 'ResetPassword' }">Ubah Password</router-link>
-    <br />
-    <br />
-    <button @click="Logout()">Logout</button>
+    <Navbar></Navbar>
+    <div class="container">
+      <FAB v-if="role === 'A'"></FAB>
+    </div>
   </div>
 </template>
 
 <script>
-import { AuthLogout } from "@/services/auth";
-import NProgress from "nprogress";
+import { Navbar, FAB } from "@/components/module";
 
 export default {
   title: "Dashboard",
-
   name: "Dashboard",
-
+  components: {
+    Navbar,
+    FAB
+  },
   data() {
     return {
-      onSubmit: false
+      role: localStorage.getItem("access_guard")
     };
-  },
-
-  methods: {
-    async Logout() {
-      if (this.onSubmit == false) {
-        this.onSubmit = true;
-        NProgress.start();
-
-        let res = await AuthLogout();
-        this.onSubmit = false;
-        NProgress.done();
-        if (res == 200 || res == 401) this.BackLogin();
-      }
-    },
-
-    BackLogin() {
-      this.$router.push({ name: "Login" });
-    }
   }
 };
 </script>
