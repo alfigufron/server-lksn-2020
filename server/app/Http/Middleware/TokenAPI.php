@@ -27,7 +27,7 @@ class TokenAPI extends BaseMiddleware
 			if ($err instanceof TokenInvalid) {
 				return response()->json(['message' => 'Unauthorized'], 401);
 			} elseif ($err instanceof TokenExpired) {
-				return response()->json(['message' => 'Token expired', 401]);
+				return response()->json(['message' => 'Token expired'], 401);
 			} else {
 				if ($err->getMessage() === 404)
 					return response()->json(['message' => 'User not found'], 404);
