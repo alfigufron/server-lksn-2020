@@ -27,3 +27,18 @@ Route::prefix('auth')->group(function() {
 		Route::post('logout', 'AuthController@logout');
 	});
 });
+
+Route::group([
+	'prefix' => 'poll',
+	'middleware' => 'check.token'
+], function () {
+	Route::middleware('role:admin')->group(function() {
+		Route::post('/', 'PollController@create');
+		Route::delete('/{id}', 'PollController@delete');
+	});
+
+	Route::get('/', 'PollController@all');
+	Route::get('/{id}', 'PollController@detail');
+	Route::post('/{poll_id}/vote/{choice_id}', 'PollController@vote')
+		->middleware('role:user');
+});

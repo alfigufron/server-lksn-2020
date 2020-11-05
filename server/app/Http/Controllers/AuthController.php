@@ -29,8 +29,6 @@ class AuthController extends Controller
 		];
 		if (!$token = Auth::claims($payload)->attempt($loginData))
 			return response()->json(['error' => 'Unauthorized'], 401);
-		
-		
 
 		return response()->json([
 			'access_token' => $token,
