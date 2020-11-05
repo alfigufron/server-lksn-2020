@@ -6,9 +6,12 @@
 * Log In
 * Check Profile
 * Logout
-* Create Poll | ***On Progress***
+* Create Poll (Admin)
+* Delete Poll (Admin)
+* Get All Poll
+* Detail Poll | ***On Progress***
 
 ## Vue 2
 * Log In
-* Change Password
+* Reset Password
 * Dashboard | ***On Progress***
