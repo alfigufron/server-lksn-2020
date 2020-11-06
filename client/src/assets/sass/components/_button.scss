@@ -10,6 +10,7 @@ button, .btn {
   transition: .3s;
   text-align: center;
   font-size: 18px;
+  height: auto;
 
   &:hover {
     background-color: $primary-color-darken;
@@ -26,16 +27,23 @@ button, .btn {
   }
 
   &.btn-sm {
-    padding: 8px 14px;
+    padding: 6px 10px;
+  }
+
+  &.btn-danger {
+    background-color: $base-danger-color;
   }
 }
 
 .fab {
   border-radius: 50%;
   padding: 8px 13px;
-  position: absolute;
+  position: fixed;
   bottom: 30px;
-  right: 50px;
+  right: 40px;
+  -webkit-box-shadow: 10px 10px 10px -6px rgba(0,0,0,0.25);
+  -moz-box-shadow: 10px 10px 10px -6px rgba(0,0,0,0.25);
+  box-shadow: 10px 10px 10px -6px rgba(0,0,0,0.25);
 
   i {
     font-size: 26px;

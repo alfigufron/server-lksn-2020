@@ -14,6 +14,7 @@ Vue.config.productionTip = false;
 
 Vue.use(VueSimpleAlert);
 Vue.use(SweetModal);
+Vue.use(require("vue-moment"));
 
 Vue.component("VueCtkDateTimePicker", VueCtkDateTimePicker);
 

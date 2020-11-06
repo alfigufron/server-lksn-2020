@@ -2,7 +2,7 @@
   <div class="dashboard">
     <Navbar></Navbar>
     <div class="container">
-      <sweet-modal ref="CreatePoll" pulse-on-block="false" blocking="true">
+      <sweet-modal ref="CreatePoll" :pulse-on-block="false" :blocking="true">
         <div class="create-poll">
           <h1>Tambah Voting</h1>
           <form>
@@ -87,6 +87,8 @@
         </div>
       </sweet-modal>
 
+      <PollData v-if="!renderComponent"></PollData>
+
       <button v-if="role === 'A'" @click="CreatePoll()" class="fab">
         <i class="ri-add-fill"></i>
       </button>
@@ -95,7 +97,7 @@
 </template>
 
 <script>
-import { Navbar } from "@/components/module";
+import { Navbar, PollData } from "@/components/module";
 import { getGuard } from "@/services/config-http";
 import { Create } from "@/services/polling";
 
@@ -105,7 +107,8 @@ export default {
   title: "Dashboard",
   name: "Dashboard",
   components: {
-    Navbar
+    Navbar,
+    PollData
   },
   data() {
     return {
@@ -117,10 +120,23 @@ export default {
         choices: [""]
       },
       onSubmit: false,
-      formatInvalid: false
+      formatInvalid: false,
+      renderComponent: false
     };
   },
+  created() {
+    this.RenderComponent();
+  },
   methods: {
+    RenderComponent() {
+      NProgress.start();
+      this.renderComponent = true;
+      this.$nextTick(() => {
+        this.renderComponent = false;
+      });
+      NProgress.done();
+    },
+
     CreatePoll() {
       this.$refs.CreatePoll.open();
     },
@@ -151,9 +167,10 @@ export default {
 
         const res = await Create(this.data);
         if (res == 401) {
+          this.CloseCreatePoll();
           this.$fire({
             title: "Gagal",
-            text: "Anda tidak memiliki akses!",
+            text: "Sesi anda telah habis! silahkan login lagi",
             type: "error"
           }).then(() => {
             this.$router.push({ name: "Login" });
@@ -164,6 +181,7 @@ export default {
           this.formatInvalid = false;
           this.CloseCreatePoll();
           this.DefaultData();
+          this.RenderComponent();
 
           this.$fire({
             title: "Sukses",

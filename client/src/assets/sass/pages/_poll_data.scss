@@ -1,0 +1,57 @@
+.poll-data {
+  margin-bottom: 100px;
+
+  .title {
+    padding: 30px 0;
+    text-align: center;
+
+    h1 {
+      color: $primary-color;
+      font-weight: 600;
+    }
+  }
+
+  .data {
+    margin-bottom: 20px;
+
+    .poll-title {
+      font-size: 22px;
+      color: $primary-color-darken;
+    }
+    
+    p {
+      margin: 6px 0;
+    }
+
+    .deadline {
+      margin-top: 10px;
+      display: flex;
+      font-size: 18px;
+
+      i, h5 {
+        font-weight: 600;
+      }
+
+      i {
+        margin-right: 6px;
+      }
+    }
+
+    .option {
+      align-self: center;
+      display: flex;
+      justify-content: right;
+
+      button {
+        padding-top: 10px;
+        font-weight: 600;
+        font-size: 20px;
+        margin-right: 10px;
+
+        i {
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
