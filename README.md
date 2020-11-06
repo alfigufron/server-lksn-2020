@@ -14,4 +14,5 @@
 ## Vue 2
 * Log In
 * Reset Password
+* Create Poll
 * Dashboard | ***On Progress***
