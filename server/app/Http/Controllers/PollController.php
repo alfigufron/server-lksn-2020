@@ -16,9 +16,9 @@ class PollController extends Controller
 		$validated = Validator::make($req->all(), [
 			'title' => 'required|string',
 			'description' => 'required|string',
-			'deadline' => 'required|date_format:Y-m-d H:i:s',
-			'choice' => 'array|min:2',
-			'choice.*' => 'required|string',
+			'deadline' => 'required|date_format:Y-m-d H:i',
+			'choices' => 'array|min:2',
+			'choices.*' => 'required|string',
 		]);
 
 		if ($validated->fails())
@@ -33,7 +33,7 @@ class PollController extends Controller
 		$poll->created_by = Auth::user()->id;
 		$poll->save();
 
-		foreach ($req->choice as $item):
+		foreach ($req->choices as $item):
 			$choice = new Choice;
 			$choice->choice = $item;
 			$choice->poll_id = $poll->id;
