@@ -41,8 +41,9 @@ async function ResetPassword(data) {
 
     return res.status;
   } catch (err) {
-    if (err.response.status === 422) return 422;
-    if (err.response.status === 401) return 401;
+    let status = err.response.status;
+
+    if (status == 422 || status == 401) return status;
     alert("There is an error");
   }
 }
@@ -58,7 +59,7 @@ async function AuthLogout() {
       clearToken();
       return 401;
     }
-    console.log(err.response);
+    alert("There is an error");
   }
 }
 

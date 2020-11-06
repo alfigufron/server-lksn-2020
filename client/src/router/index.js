@@ -4,7 +4,7 @@ import NProgress from "nprogress";
 import jwt_decode from "jwt-decode";
 
 import { Profile } from "@/services/auth";
-import { http } from "@/services/config-http";
+import { getToken, setToken } from "@/services/config-http";
 
 import { LoginPage, DashboardAdmin, ResetPassword } from "@/views/module";
 
@@ -48,9 +48,9 @@ const router = new VueRouter({
 var def_pass = false;
 
 async function Auth() {
-  const token = localStorage.getItem("access_token");
+  const token = getToken();
   if (token) {
-    http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    setToken(token, null, true);
   }
 
   const res = await Profile();
@@ -65,6 +65,7 @@ async function Auth() {
 }
 
 router.beforeEach(async (to, from, next) => {
+  NProgress.start();
   if (to.matched.some(record => record.meta.Unauthenticated)) {
     if (await Auth()) {
       def_pass ? next({ name: "ResetPassword" }) : next({ name: "Dashboard" });

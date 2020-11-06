@@ -11,8 +11,10 @@
 @import 'pages/login';
 @import 'pages/dashboard';
 @import 'pages/reset_password';
+@import 'pages/create_poll';
 
 @import 'vendors/bootstrap/bootstrap-grid.scss';
+@import 'vendors/sweet_modal/custom';
 
 
 * {

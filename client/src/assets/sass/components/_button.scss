@@ -24,6 +24,10 @@ button, .btn {
   &.btn-block {
     display: block;
   }
+
+  &.btn-sm {
+    padding: 8px 14px;
+  }
 }
 
 .fab {
