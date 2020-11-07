@@ -12,8 +12,9 @@ class DivisionSeeder extends Seeder
 	 */
 	public function run()
 	{
-		Division::create(['name' => 'Divisi 1']);
-		Division::create(['name' => 'Divisi 2']);
-		Division::create(['name' => 'Divisi 3']);
+		Division::create(['name' => 'Payment']);
+		Division::create(['name' => 'Procurement']);
+		Division::create(['name' => 'IT']);
+		Division::create(['name' => 'Finance']);
 	}
 }

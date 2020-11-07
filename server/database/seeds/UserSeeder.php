@@ -20,35 +20,63 @@ class UserSeeder extends Seeder
 		]);
 
 		User::create([
-			'username' => 'admin02',
-			'password' => bcrypt('admin123'),
-			'role' => 'ADMIN',
-			'division_id' => 2
-		]);
-
-		User::create([
-			'username' => 'admin03',
-			'password' => bcrypt('admin123'),
-			'role' => 'ADMIN',
-			'division_id' => 3
-		]);
-
-		User::create([
-			'username' => 'user01',
+			'username' => 'userpayment01',
 			'password' => bcrypt('user123'),
 			'role' => 'USER',
 			'division_id' => 1
 		]);
 
 		User::create([
-			'username' => 'user02',
+			'username' => 'userprocurement01',
 			'password' => bcrypt('user123'),
 			'role' => 'USER',
 			'division_id' => 2
 		]);
 
 		User::create([
-			'username' => 'user03',
+			'username' => 'userprocurement02',
+			'password' => bcrypt('user123'),
+			'role' => 'USER',
+			'division_id' => 2
+		]);
+
+		User::create([
+			'username' => 'userprocurement03',
+			'password' => bcrypt('user123'),
+			'role' => 'USER',
+			'division_id' => 2
+		]);
+
+		User::create([
+			'username' => 'userit01',
+			'password' => bcrypt('user123'),
+			'role' => 'USER',
+			'division_id' => 3
+		]);
+
+		User::create([
+			'username' => 'userit02',
+			'password' => bcrypt('user123'),
+			'role' => 'USER',
+			'division_id' => 3
+		]);
+
+		User::create([
+			'username' => 'userit03',
+			'password' => bcrypt('user123'),
+			'role' => 'USER',
+			'division_id' => 3
+		]);
+
+		User::create([
+			'username' => 'userit04',
+			'password' => bcrypt('user123'),
+			'role' => 'USER',
+			'division_id' => 3
+		]);
+
+		User::create([
+			'username' => 'userit05',
 			'password' => bcrypt('user123'),
 			'role' => 'USER',
 			'division_id' => 3

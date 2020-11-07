@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use stdClass;
 
 class PollController extends Controller
 {
@@ -78,13 +77,23 @@ class PollController extends Controller
 	}
 
 	public function detail($id) {
+		$check = Poll::find($id);
+		if (!$check)
+			return response()->json(['message' => 'Data Not Found'], 404);
+
 		$divisionVote = Vote::select('division_id')
 			->groupBy('division_id')
 			->get();
 		
+		if (count($divisionVote) == 0)
+			return response()->json(['message' => 'Data Not Found'], 404);
+			
 		$listChoice = Choice::select('id', 'choice')
 			->where('poll_id', $id)
 			->get();
+
+		if (count($listChoice) == 0)
+			return response()->json(['message' => 'Data Not Found'], 404);
 		
 		foreach ($divisionVote as $key => $division) {
 			foreach ($listChoice as $choice) {
@@ -92,23 +101,41 @@ class PollController extends Controller
 					->where('choice_id', $choice->id)
 					->count();
 				
-				$resultChoice[$choice->id] = $count;
+				$resultChoices[$choice->id] = $count;
 			}
 
 			$data['division_id'] = $division->division_id;
-			$data['choice'] = $resultChoice;
+			$data['max_choice'] = $resultChoices;
 			$resultDivision[$key] = $data;
 		}
 
-		foreach ($resultDivision as $index => $data) {
-			$max = max($data['choice']);
-			$maxData[$data['division_id']] = $max;
+		$points = [];
+		foreach ($resultDivision as $data) {
+			$max = max($data['max_choice']);
+			$arrayMax = array_keys($data['max_choice'], $max);
+
+			foreach ($arrayMax as $item) {
+				if (count($arrayMax) > 1) {
+					$point = 1 / count($arrayMax);
+					if (isset($points[$item])) {
+						$points[$item] += $point;
+					} else {
+						$points[$item] = $point;
+					}
+				} else {
+					$point = 1;
+					$points[$item] = $point;
+				}
+			}	
 		}
 
-		return response()->json([
-			// 'result_division' => $resultDivision,
-			'max' => $maxData
-		]);
+		$sum = array_sum($points);
+		foreach ($points as $key => $point) {
+			$res = ($point / $sum) * 100;
+			$points[$key] = $res;
+		}
+
+		return $points;
 	}
 
 	public function vote($poll_id, $choice_id) {
