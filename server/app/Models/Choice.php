@@ -10,6 +10,10 @@ class Choice extends Model
 		'choice', 'poll_id'
 	];
 
+	public function vote() {
+		return $this->hasMany(Vote::class);
+	}
+
 	public function poll() {
 		return $this->belongsTo(Poll::class);
 	}

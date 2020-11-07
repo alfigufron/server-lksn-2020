@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Choice;
 use App\Models\Poll;
+use App\Models\Vote;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use stdClass;
 
 class PollController extends Controller
 {
@@ -59,9 +61,9 @@ class PollController extends Controller
 		$dateNow = Carbon::now()->format('Y-m-d H:i:s');
 
 		if ($user->role == 'ADMIN') {
-			$data = Poll::all();
+			$data = Poll::latest()->get();
 		} else {
-			$data = DB::table('polls')
+			$data = Poll::latest()
 				->whereExists(function($q) {
 					$q->select(DB::raw(1))
 						->from('votes')
@@ -76,10 +78,70 @@ class PollController extends Controller
 	}
 
 	public function detail($id) {
-		return 200;
+		$divisionVote = Vote::select('division_id')
+			->groupBy('division_id')
+			->get();
+		
+		$listChoice = Choice::select('id', 'choice')
+			->where('poll_id', $id)
+			->get();
+		
+		foreach ($divisionVote as $key => $division) {
+			foreach ($listChoice as $choice) {
+				$count = Vote::where('division_id', $division->division_id)
+					->where('choice_id', $choice->id)
+					->count();
+				
+				$resultChoice[$choice->id] = $count;
+			}
+
+			$data['division_id'] = $division->division_id;
+			$data['choice'] = $resultChoice;
+			$resultDivision[$key] = $data;
+		}
+
+		foreach ($resultDivision as $index => $data) {
+			$max = max($data['choice']);
+			$maxData[$data['division_id']] = $max;
+		}
+
+		return response()->json([
+			// 'result_division' => $resultDivision,
+			'max' => $maxData
+		]);
 	}
 
 	public function vote($poll_id, $choice_id) {
-		return 200;
+		$user = Auth::user();
+		$poll = Poll::find($poll_id);
+
+		$deadline = Carbon::parse($poll->deadline)->timestamp;
+		if (Carbon::now()->timestamp > $deadline)
+			return response()->json(['message' => 'Voting Deadline'], 404);
+
+		if (!$poll)
+			return response()->json(['message' => 'Invalid Choice'], 404);
+		
+		$choice = Choice::find($choice_id);
+		if (!$choice)
+			return response()->json(['message' => 'Invalid Choice'], 404);
+			
+		$vote = Vote::where([
+			['user_id', '=', $user->id],
+			['poll_id', '=', $poll->id],
+			['division_id', '=', $user->division->id]
+		])->get();
+			
+		if (count($vote) != 0)
+			return response()->json(['message' => 'Already Voted'], 422);
+		
+		$newVote = new Vote;
+		$newVote->choice_id = $choice->id;
+		$newVote->user_id = $user->id;
+		$newVote->poll_id = $poll->id;
+		$newVote->division_id = $user->division->id;
+		$newVote->save();
+
+		return response()->json(['message' => 'Voting Success'], 200);
 	}
 }
