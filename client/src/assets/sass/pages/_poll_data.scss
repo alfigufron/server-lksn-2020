@@ -11,6 +11,15 @@
     }
   }
 
+  .null-data {
+    text-align: center;
+
+    span {
+      color: $primary-color;
+      font-size: 18px;
+    }
+  }
+
   .data {
     margin-bottom: 20px;
 

@@ -4,7 +4,7 @@
       <h1>Data Voting</h1>
     </div>
 
-    <div class="row">
+    <div class="row" v-if="polls.length != 0">
       <div class="col-md-12" v-for="(poll, index) in polls" :key="index">
         <div class="data card shadow bordered">
           <div class="row">
@@ -38,6 +38,13 @@
         </div>
       </div>
     </div>
+
+    <div class="row" v-else>
+      <div class="col-md-12 null-data">
+        <span v-if="onLoad == true">Loading</span>
+        <span v-if="onLoad == false">Tidak ada data</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -52,7 +59,8 @@ export default {
   data() {
     return {
       polls: [],
-      onSubmit: false
+      onSubmit: false,
+      onLoad: false
     };
   },
 
@@ -62,7 +70,9 @@ export default {
 
   methods: {
     async Data() {
+      this.onLoad = true;
       this.polls = await Data();
+      this.onLoad = false;
     },
 
     ConfirmDelete(id) {
@@ -98,7 +108,7 @@ export default {
         } else if (res == 200) {
           this.$fire({
             title: "Sukses",
-            text: "Voting berhasil ditambahkan!",
+            text: "Voting berhasil dihapus!",
             type: "success"
           });
         }
