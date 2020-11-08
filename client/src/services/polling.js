@@ -26,6 +26,16 @@ async function Create(data) {
   }
 }
 
+async function Detail(id) {
+  try {
+    const res = await http.get(`poll/${id}`);
+
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 async function Delete(id) {
   try {
     await http.delete(`poll/${id}`);
@@ -39,4 +49,4 @@ async function Delete(id) {
   }
 }
 
-export { Create, Data, Delete };
+export { Create, Data, Detail, Delete };

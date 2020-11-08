@@ -1,4 +1,7 @@
 import Navbar from "../Navbar.vue";
 import PollData from "../PollData.vue";
 
-export { Navbar, PollData };
+import CreatePoll from "../modal/CreatePoll.vue";
+import DetailPoll from "../modal/DetailPoll.vue";
+
+export { Navbar, PollData, CreatePoll, DetailPoll };

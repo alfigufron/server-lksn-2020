@@ -30,7 +30,7 @@ function getGuard() {
 function defaultPassword() {
   let payload = jwt_decode(getToken());
 
-  return payload.def_pass();
+  return payload.def_pass;
 }
 
 function clearToken() {
