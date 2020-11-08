@@ -13,7 +13,11 @@ class Poll extends Model
     'title', 'description', 'deadline', 'created_by'
   ];
 
-  public function choice() {
+  protected $hidden = [
+    'deleted_at'
+  ];
+
+  public function choices() {
     return $this->hasMany(Choice::class);
   }
 

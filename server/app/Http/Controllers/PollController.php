@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Choice;
 use App\Models\Poll;
+use App\Models\User;
 use App\Models\Vote;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -77,23 +78,48 @@ class PollController extends Controller
 	}
 
 	public function detail($id) {
-		$check = Poll::find($id);
-		if (!$check)
+		$poll = Poll::with('choices')->find($id);
+		if (!$poll)
 			return response()->json(['message' => 'Data Not Found'], 404);
-
-		$divisionVote = Vote::select('division_id')
-			->groupBy('division_id')
-			->get();
 		
-		if (count($divisionVote) == 0)
-			return response()->json(['message' => 'Data Not Found'], 404);
-			
+		$user = Auth::user();
+		$checkVote = Vote::where([
+			['poll_id', $id],
+			['user_id', $user->id]
+		])->first();
+		$deadline = Carbon::parse($poll->deadline)->timestamp;
+
+		if ($user->role == 'USER') {
+			if (!$checkVote) {
+				if (Carbon::now()->timestamp < $deadline) {
+					return response()->json(['message' => 'Data Not Found'], 404);
+				}
+			}
+		}
+
 		$listChoice = Choice::select('id', 'choice')
 			->where('poll_id', $id)
 			->get();
 
 		if (count($listChoice) == 0)
-			return response()->json(['message' => 'Data Not Found'], 404);
+			return response()->json(['message' => 'Data Choice Not Found'], 404);
+
+		$divisionVote = Vote::select('division_id')
+			->where('poll_id', $id)
+			->groupBy('division_id')
+			->get();
+		
+		if (count($divisionVote) == 0) {
+			foreach ($listChoice as $choice) {
+				$result[$choice->choice] = 0;
+			}
+
+			$poll->creator = User::find($poll->created_by)->username;
+			$poll->created_at = $poll->created_at;
+			$poll->result = $result;
+
+			return response()->json($poll, 200);
+		}
 		
 		foreach ($divisionVote as $key => $division) {
 			foreach ($listChoice as $choice) {
@@ -132,10 +158,16 @@ class PollController extends Controller
 		$sum = array_sum($points);
 		foreach ($points as $key => $point) {
 			$res = ($point / $sum) * 100;
-			$points[$key] = $res;
+			$option = Choice::where('id', $key)->first();
+
+			$resultPoints[$option->choice] = number_format($res, 2);
 		}
 
-		return $points;
+		$poll->creator = User::find($poll->created_by)->username;
+		$poll->created_at = $poll->created_at;
+		$poll->result = $resultPoints;
+
+		return response()->json($poll, 200);
 	}
 
 	public function vote($poll_id, $choice_id) {
