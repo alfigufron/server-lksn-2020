@@ -1,5 +1,7 @@
 import { getField, updateField } from "vuex-map-fields";
-import { http, getStatusCode } from "@/services/http-config";
+import { http, getStatusCode, setToken } from "@/services/http-config";
+import router from "@/router";
+import cookie from "vue-cookies";
 
 const Auth = {
   namespaced: true,
@@ -8,7 +10,7 @@ const Auth = {
       username: "",
       password: ""
     },
-    token: ""
+    token: cookie.get("access_token") || ""
   },
   getters: {
     getField
@@ -32,32 +34,81 @@ const Auth = {
         return;
       }
 
-      rootState.isLoading = true;
-
       try {
+        rootState.isLoading = true;
         let res = await http.post("auth/login", state.data);
+        let data = res.data;
 
-        return res;
+        cookie.set(
+          "access_token",
+          data.access_token,
+          60 * 5,
+          "/",
+          window.location.hostname,
+          true
+        );
+        state.data.token = data.access_token;
+        setToken(data.access_token);
+
+        rootState.isLoading = false;
+        router.push({ name: "Dashboard" });
+
+        return;
       } catch (err) {
-        let status = getStatusCode(err);
+        if (getStatusCode(err)) {
+          let status = getStatusCode(err);
 
-        if (status == 401) {
-          commit(
-            "showModal",
-            {
-              icon: "error",
-              title: "Gagal",
-              text: "Username atau password salah"
-            },
-            { root: true }
-          );
-          return;
-        } else {
-          alert("Server Error");
+          if (status == 401) {
+            commit(
+              "showModal",
+              {
+                icon: "error",
+                title: "Gagal",
+                text: "Username atau password salah"
+              },
+              { root: true }
+            );
+            return (rootState.isLoading = false);
+          }
+        }
+
+        alert("Server Error");
+      }
+    },
+
+    async Logout({ state, rootState, commit }) {
+      try {
+        rootState.isLoading = true;
+        await http.post("auth/logout");
+        cookie.remove("access_token");
+        state.data.token = "";
+        state.data.password = "";
+
+        rootState.isLoading = false;
+
+        router.push({ name: "Login" });
+        return;
+      } catch (err) {
+        if (getStatusCode(err)) {
+          let status = getStatusCode(err);
+
+          if (status == 401) {
+            router.push({ name: "Login" });
+            commit(
+              "showModal",
+              {
+                icon: "error",
+                title: "Tidak memiliki akses",
+                text: "Anda harus login terlebih dahulu"
+              },
+              { root: true }
+            );
+            return (rootState.isLoading = false);
+          }
         }
       }
 
-      rootState.isLoading = false;
+      alert("Server Error");
     }
   }
 };

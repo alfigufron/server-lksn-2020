@@ -1,25 +1,43 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-// import Home from "../views/Home.vue";
+// import NProgress from "nprogress";
 
-import { Login } from "@/views/module";
+import { Login, Dashboard } from "@/views/module";
+import { setToken } from "@/services/http-config";
+import cookie from "vue-cookies";
 
 Vue.use(VueRouter);
+
+function checkToken() {
+  let token = cookie.get("access_token");
+  let access = false;
+
+  setToken(token);
+  token ? (access = true) : (access = false);
+
+  return access;
+}
+
+function authenticated(to, from, next) {
+  checkToken() ? next() : next({ name: "Login" });
+}
+
+function unauthenticated(to, from, next) {
+  checkToken() ? next({ name: "Dashboard" }) : next();
+}
 
 const routes = [
   {
     path: "/",
-    name: "Home",
+    name: "Login",
+    beforeEnter: unauthenticated,
     component: Login
   },
   {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
+    path: "/dashboard",
+    name: "Dashboard",
+    beforeEnter: authenticated,
+    component: Dashboard
   }
 ];
 
@@ -28,5 +46,13 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
+
+// router.beforeResolve(to => {
+//   if (to.name) NProgress.start();
+// });
+
+// router.afterEach(() => {
+//   NProgress.done();
+// });
 
 export default router;

@@ -1,3 +1,4 @@
 import Login from "../Login.vue";
+import Dashboard from "../Dashboard.vue";
 
-export { Login };
+export { Login, Dashboard };
