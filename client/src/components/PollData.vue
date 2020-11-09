@@ -25,7 +25,7 @@
                   </button>
                 </div>
 
-                <div>
+                <div v-if="role == 'A'">
                   <button
                     class="btn-sm btn-danger"
                     @click="ConfirmDelete(poll.id)"
@@ -58,6 +58,7 @@
 
 <script>
 import { Data, Delete } from "@/services/polling";
+import { getGuard } from "@/services/config-http";
 
 import NProgress from "nprogress";
 
@@ -76,7 +77,8 @@ export default {
       onSubmit: false,
       onLoad: false,
       DetailPollModal: false,
-      DetailId: 0
+      DetailId: 0,
+      role: getGuard()
     };
   },
 
@@ -96,7 +98,6 @@ export default {
         ? (this.DetailPollModal = true)
         : (this.DetailPollModal = false);
       this.DetailId = id;
-      console.log(this.DetailId);
     },
 
     CloseDetailPollModal() {

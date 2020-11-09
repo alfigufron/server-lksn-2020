@@ -30,9 +30,12 @@ async function Detail(id) {
   try {
     const res = await http.get(`poll/${id}`);
 
-    return res.data;
+    return res;
   } catch (err) {
-    console.log(err);
+    let status = err.response.status;
+
+    if (status == 401 || status == 401) return status;
+    alert("There is an error");
   }
 }
 
@@ -44,7 +47,7 @@ async function Delete(id) {
   } catch (err) {
     let status = err.response.status;
 
-    if (status == 401 && status == 404) return status;
+    if (status == 401 || status == 404) return status;
     alert("There is an error");
   }
 }
