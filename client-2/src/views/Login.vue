@@ -1,5 +1,5 @@
 <template>
-  <div class="login container vh-100 d-flex">
+  <div class="login" :style="styleBody">
     <ModalAlert
       :show="show"
       :icon="icon"
@@ -7,42 +7,44 @@
       :title="title"
     ></ModalAlert>
 
-    <div class="row w-100 justify-content-center align-self-center">
-      <div class="col-md-5">
-        <div class="card shadow text-center">
-          <img class="card-img-top" src="holder.js/100px180/" alt="" />
-          <div class="card-body">
-            <h2 class="card-title font-weight-bold">
-              Masuk
-            </h2>
+    <b-container class="vh-100 d-flex">
+      <b-row align-v="center" class="w-100 d-flex">
+        <b-col md="7" class="text-center">
+          <img
+            class="w-100"
+            src="@/assets/characters/boy-with-tablet.png"
+            alt="boy-with-tablet"
+          />
+        </b-col>
+        <b-col md="5" align-v="center" class="card-login">
+          <h1 class="card-title font-weight-bold">
+            Selamat Datang
+          </h1>
+          <p>
+            Halo! Kamu harus login dulu ya, biar dapet akses masuk dan voting
+          </p>
+          <form @submit.prevent="Login()" class="text-left mt-4">
+            <b-form-group label="Username">
+              <b-form-input v-model="username" type="text"></b-form-input>
+            </b-form-group>
 
-            <form @submit.prevent="Login()" class="text-left mt-4">
-              <div class="form-group">
-                <label>Username</label>
-                <input type="text" class="form-control" v-model="username" />
-              </div>
+            <b-form-group label="Password">
+              <b-form-input v-model="password" type="password"></b-form-input>
+            </b-form-group>
 
-              <div class="form-group">
-                <label>Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  v-model="password"
-                />
-              </div>
-
-              <button
-                type="submit"
-                class="btn btn-secondary btn-block"
-                :disabled="isLoading"
-              >
-                Masuk
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+            <b-button
+              variant="secondary"
+              :disabled="isLoading"
+              type="submit"
+              class="btn-block"
+            >
+              <span v-if="!isLoading">Masuk</span>
+              <b-spinner small v-if="isLoading"></b-spinner>
+            </b-button>
+          </form>
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
@@ -64,6 +66,24 @@ export default {
   },
   components: {
     ModalAlert
+  },
+  data() {
+    return {
+      styleBody: {
+        backgroundImage: `url(${require("@/assets/background/login.png")})`
+      }
+    };
   }
 };
 </script>
+
+<style lang="scss">
+.login {
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.card-login {
+  padding-right: 40px !important;
+}
+</style>

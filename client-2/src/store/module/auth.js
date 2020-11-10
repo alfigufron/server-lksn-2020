@@ -16,7 +16,14 @@ const Auth = {
     getField
   },
   mutations: {
-    updateField
+    updateField,
+    updateToken(state, token) {
+      state.data.token = token;
+    },
+    defaultData(state) {
+      state.data.password = "";
+      state.data.token = "";
+    }
   },
   actions: {
     async Login({ state, commit, rootState }) {
@@ -47,7 +54,7 @@ const Auth = {
           window.location.hostname,
           true
         );
-        state.data.token = data.access_token;
+        commit("updateToken", data.access_token);
         setToken(data.access_token);
 
         rootState.isLoading = false;
@@ -76,16 +83,16 @@ const Auth = {
       }
     },
 
-    async Logout({ state, rootState, commit }) {
+    async Logout({ rootState, commit }) {
       try {
         rootState.isLoading = true;
+
         await http.post("auth/logout");
+
         cookie.remove("access_token");
-        state.data.token = "";
-        state.data.password = "";
+        commit("defaultData");
 
         rootState.isLoading = false;
-
         router.push({ name: "Login" });
         return;
       } catch (err) {

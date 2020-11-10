@@ -38,28 +38,34 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.sweet-content {
-  padding: 40px 0;
+<style lang="scss">
+.sweet-modal {
+  width: 40% !important;
 
-  .text {
-    margin: auto;
-    width: 80%;
+  &.is-alert {
+    .sweet-content {
+      padding: 40px 0 !important;
 
-    .title {
-      padding-bottom: 10px;
+      .text {
+        margin: auto;
+        width: 80%;
+
+        .title {
+          padding-bottom: 10px;
+        }
+
+        .description {
+          padding-bottom: 20px;
+        }
+      }
+
+      button {
+        display: block;
+        margin: auto;
+        padding: 0.4rem 1.5rem;
+        font-size: 1.2rem;
+      }
     }
-
-    .description {
-      padding-bottom: 20px;
-    }
-  }
-
-  button {
-    display: block;
-    margin: auto;
-    padding: 0.4rem 1.5rem;
-    font-size: 1.2rem;
   }
 }
 </style>
